@@ -8,7 +8,7 @@ async function bootstrap() {
   // Exception -> response handling
   const httpAdapterHost = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
-
+  
   await app.listen(3000);
 }
 bootstrap();
