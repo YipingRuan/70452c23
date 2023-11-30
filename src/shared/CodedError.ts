@@ -5,23 +5,26 @@ export class CodedError extends Error {
     data: any  // For translation template interpolation
     internalData: any = {} // For logging, not send to client
     timestamp: string = new Date().toISOString()
-    httpStatusHint: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR
+    httpStatusHint: HttpStatus
 
-    constructor(code: string, data = {}) {
+    constructor(code: string, data = {}, httpStatusHint: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR) {
         super();
 
         this.code = code;
         this.data = data;
+        this.httpStatusHint = httpStatusHint;
     }
 
-    static WrapError(error: Error, code: string, data: any={}): CodedError {
-        // Bubble up from inside?
+    static Wrap(error: Error, code: string, data: any = {}, httpStatusHint: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR): CodedError {
+        // CodedError bubble up from inside?
         if (error instanceof CodedError) {
             return error;
         }
-        
+
         // Wrap a normal Error
-        const codedError = new CodedError(code, data); // Enrich
+        const codedError = new CodedError(code, data, httpStatusHint);
+        codedError.name = error.name;
+        codedError.message = error.message;
         codedError.stack = error.stack;
 
         return codedError;
