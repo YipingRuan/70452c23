@@ -9,3 +9,7 @@ export function parseDate(input: string, format: string): Dayjs | null {
 
     return output;
 }
+
+export function logTemplate(method: Function, correlationId: string): string {
+    return `[${method.name}][${correlationId}]`;
+}
