@@ -10,6 +10,7 @@ import { CodedError } from './CodedError';
 import { CorrelationService } from '@evanion/nestjs-correlation-id';
 import { Request } from 'express';
 import { CORRELATION_ID_HEADER } from '@evanion/nestjs-correlation-id'
+import * as os from 'os';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -24,6 +25,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest<Request>();
 
+    const internal = {
+      stack: (codedError.stack || "").split('\n'),
+      hostname: os.hostname()
+     };
+    // Log the error to ElasticSearch?
+
     const responseBody = {
       code: codedError.code,
       data: codedError.data,
@@ -32,14 +39,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
       httpCode: codedError.httpStatusHint
     };
-    
-    // Log the error to ElasticSearch?
-
     // If on dev env
-    responseBody["internal"] = { 
-      stack: (codedError.stack || "").split('\n'),
-      data: codedError.data
-     }
+    responseBody["internal"] = internal
 
     httpAdapter.reply(ctx.getResponse(), responseBody, codedError.httpStatusHint);
   }

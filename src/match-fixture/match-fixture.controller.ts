@@ -1,31 +1,22 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { MatchFixtureService } from './match-fixutre.service';
 
-@Controller('match-fixture')
+@Controller('matchFixture')
 export class MatchFixtureController {
-  constructor(private readonly service: MatchFixtureService) { }
+  constructor(protected readonly service: MatchFixtureService) { }
 
-  @Post("fixturesListing")
-  fixturesListing(date: number, timezoneOffset: number) {
-    return {
-      date,
-      timezoneOffset,
-      matches: [],
-      haveNext: true
-    };
+  @Post("listDailyMatches")
+  listDailyMatches(@Query('date') date: number, @Query('timezoneOffset') timezoneOffset: number) {
+    return this.service.listDailyMatches(date, timezoneOffset);
   }
 
-  @Get("fixturesCalendar")
-  fixturesCalendar(year: number, month: number) {
-    return {
-      year,
-      month,
-      matchMask: 1234
-    };
+  @Get("listMonthlyMatchMask")
+  listMonthlyMatchMask(@Query('year') year: number, @Query('month') month: number) {
+    return this.service.listMonthlyMatchMask(year, month);
   }
 
-  @Get()
-  getHello(): string {
-    return this.service.getHello();
-  }
+  // @Get()
+  // getHello(): string {
+  //   return this.service.getHello();
+  // }
 }

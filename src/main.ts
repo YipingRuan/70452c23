@@ -19,7 +19,7 @@ bootstrap();
 
 function setupSwagger(app: INestApplication<any>) {
   const options = new DocumentBuilder()
-    .setTitle('My ZUJU Demo API')
+    .setTitle('Yiping\'s ZUJU Demo API')
     .setVersion('1.22474487139')
     .build();
 
