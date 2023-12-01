@@ -5,18 +5,13 @@ import { MatchFixtureService } from './match-fixutre.service';
 export class MatchFixtureController {
   constructor(protected readonly service: MatchFixtureService) { }
 
-  @Post("listDailyMatches")
-  listDailyMatches(@Query('date') date: number, @Query('timezoneOffset') timezoneOffset: number) {
+  @Get("listDailyMatches")
+  listDailyMatches(@Query('date') date: string, @Query('timezoneOffset') timezoneOffset: number) {
     return this.service.listDailyMatches(date, timezoneOffset);
   }
 
   @Get("listMonthlyMatchMask")
-  listMonthlyMatchMask(@Query('year') year: number, @Query('month') month: number) {
-    return this.service.listMonthlyMatchMask(year, month);
+  listMonthlyMatchMask(@Query('year') year: string, @Query('month') month: string) {
+    return this.service.listMonthlyMatchMask(parseInt(year), parseInt(month));
   }
-
-  // @Get()
-  // getHello(): string {
-  //   return this.service.getHello();
-  // }
 }

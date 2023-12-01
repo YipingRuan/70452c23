@@ -1,6 +1,6 @@
 import { CorrelationService } from '@evanion/nestjs-correlation-id';
 import { Controller, Get, HttpStatus } from '@nestjs/common';
-import { CodedError } from 'src/shared/CodedError';
+import { CodedError, ErrorCode } from 'src/shared/CodedError';
 
 @Controller('playground')
 export class PlaygroundController {
@@ -34,15 +34,15 @@ export class PlaygroundController {
 
 class TestService {
     error1(): void {
-        throw new CodedError("UPDATE_FAILED");
+        throw new CodedError(ErrorCode.UPDATE_FAILED);
     }
 
     error2(): void {
         try {
             // Deeper coded error is used
-            throw new CodedError("INVALID_INPUT", { fieldName: "DateOfBirth", fieldValue: "9978" }, HttpStatus.BAD_REQUEST)
+            throw new CodedError(ErrorCode.INVALID_INPUT, { fieldName: "DateOfBirth", fieldValue: "9978" }, HttpStatus.BAD_REQUEST)
         } catch (error) {
-            throw CodedError.Wrap(error, "UPDATE_FAILED");  // <= Higher level respect internal
+            throw CodedError.Wrap(error, ErrorCode.UPDATE_FAILED);  // <= Higher level respect internal
         }
     }
 
@@ -50,7 +50,7 @@ class TestService {
         try {
             throw new Error("Not coded error, will be wrapped")
         } catch (error) {
-            throw CodedError.Wrap(error, "UPDATE_FAILED");  // <= Higher level wrap an error without code
+            throw CodedError.Wrap(error, ErrorCode.UPDATE_FAILED);  // <= Higher level wrap an error without code
         }
     }
 }

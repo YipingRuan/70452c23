@@ -6,7 +6,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import { CodedError } from './CodedError';
+import { CodedError, ErrorCode } from './CodedError';
 import { CorrelationService } from '@evanion/nestjs-correlation-id';
 import { Request } from 'express';
 import { CORRELATION_ID_HEADER } from '@evanion/nestjs-correlation-id'
@@ -20,14 +20,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // In certain situations `httpAdapter` might not be available in the
     // constructor method, thus we should resolve it here.
     const { httpAdapter } = this.httpAdapterHost;
-    const codedError = error instanceof CodedError ? error : new CodedError("GENERAL_ERROR");
+    const codedError = CodedError.Wrap(error as Error, ErrorCode.GENERAL_ERROR);
 
     const ctx = host.switchToHttp();
     const request = ctx.getRequest<Request>();
 
     const internal = {
       stack: (codedError.stack || "").split('\n'),
-      hostname: os.hostname()
+      hostname: os.hostname(),
+      message: codedError.message,
      };
     // Log the error to ElasticSearch?
 

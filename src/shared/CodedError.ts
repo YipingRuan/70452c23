@@ -1,13 +1,13 @@
 import { HttpStatus } from "@nestjs/common"
 
 export class CodedError extends Error {
-    code: string  // For translation
+    code: ErrorCode  // For translation
     data: any  // For translation template interpolation
     internalData: any = {} // For logging, not send to client
     timestamp: string = new Date().toISOString()
     httpStatusHint: HttpStatus
 
-    constructor(code: string, data = {}, httpStatusHint: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR) {
+    constructor(code: ErrorCode, data = {}, httpStatusHint: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR) {
         super();
 
         this.code = code;
@@ -15,7 +15,7 @@ export class CodedError extends Error {
         this.httpStatusHint = httpStatusHint;
     }
 
-    static Wrap(error: Error, code: string, data: any = {}, httpStatusHint: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR): CodedError {
+    static Wrap(error: Error, code: ErrorCode, data: any = {}, httpStatusHint: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR): CodedError {
         // CodedError bubble up from inside?
         if (error instanceof CodedError) {
             return error;
@@ -29,4 +29,11 @@ export class CodedError extends Error {
 
         return codedError;
     }
+}
+
+export enum ErrorCode {
+    INVALID_QUERYSTRING = "INVALID_QUERYSTRING",
+    GENERAL_ERROR = "GENERAL_ERROR",
+    UPDATE_FAILED = "UPDATE_FAILED",
+    INVALID_INPUT = "INVALID_INPUT",
 }
