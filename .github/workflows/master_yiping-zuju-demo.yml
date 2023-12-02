@@ -49,8 +49,8 @@ jobs:
         with:
           name: node-app
 
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
+      # - name: Unzip artifact for deployment
+      #   run: unzip release.zip
       
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -58,5 +58,5 @@ jobs:
         with:
           app-name: 'yiping-zuju-demo'
           slot-name: 'Production'
-          package: .
+          package: release.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3220B611FDE24BDF91FFF2E7CC64B40D }}
