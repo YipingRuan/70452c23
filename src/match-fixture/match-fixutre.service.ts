@@ -2,7 +2,7 @@ import { CorrelationService } from '@evanion/nestjs-correlation-id';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 import { CodedError, ErrorCode } from 'src/shared/CodedError';
-import { logTemplate, parseDate } from 'src/shared/utilities';
+import { isInRange, logTemplate, parseDate } from 'src/shared/utilities';
 
 @Injectable()
 export class MatchFixtureService {
@@ -19,7 +19,7 @@ export class MatchFixtureService {
     if (inputDay === null) {
       throw new CodedError(ErrorCode.INVALID_QUERYSTRING, { date });
     }
-    if (timezoneOffset < -15 || timezoneOffset > 15) {
+    if (!isInRange(timezoneOffset, -15, 15)) {
       throw new CodedError(ErrorCode.INVALID_QUERYSTRING, { timezoneOffset });
     }
 
@@ -50,10 +50,10 @@ export class MatchFixtureService {
   }
 
   async listMonthlyMatchMask(year: number, month: number) {
-    if (!Number.isInteger(year) || year < 2023 || year > 2024) {
+    if (!isInRange(year, 2023, 2024, true)) {
       throw new CodedError(ErrorCode.INVALID_QUERYSTRING, { year });
     }
-    if (!Number.isInteger(month) || month < 1 || month > 12) {
+    if (!isInRange(month, 1, 12, true)) {
       throw new CodedError(ErrorCode.INVALID_QUERYSTRING, { month });
     }
 
