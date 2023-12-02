@@ -41,7 +41,6 @@ export class MatchFixtureService {
     const matches = result["documents"].map(x => x.value);
     
     this.logger.log(`${logPrefix} end: ` + JSON.stringify({ total: matches.length }));
-
     return {
       date,
       timezoneOffset: 3,
@@ -51,7 +50,6 @@ export class MatchFixtureService {
   }
 
   async listMonthlyMatchMask(year: number, month: number) {
-    // Based on bussiness rule
     if (!Number.isInteger(year) || year < 2023 || year > 2024) {
       throw new CodedError(ErrorCode.INVALID_QUERYSTRING, { year });
     }
@@ -74,7 +72,6 @@ export class MatchFixtureService {
     }
 
     this.logger.log(`${logPrefix}  end: ` + JSON.stringify({ mask }));
-
     return { year, month, mask };
   }
 }

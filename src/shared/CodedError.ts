@@ -5,7 +5,7 @@ export class CodedError extends Error {
     data: any  // For translation template interpolation
     internalData: any = {} // For logging, not send to client
     timestamp: string = new Date().toISOString()
-    httpStatusHint: HttpStatus
+    httpStatusHint: number
 
     constructor(code: ErrorCode, data = {}, httpStatusHint: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR) {
         super();
@@ -15,7 +15,7 @@ export class CodedError extends Error {
         this.httpStatusHint = httpStatusHint;
     }
 
-    static Wrap(error: Error, code: ErrorCode, data: any = {}, httpStatusHint: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR): CodedError {
+    static Wrap(error: Error, code: ErrorCode, data: any = {}, httpStatusHint: number = HttpStatus.INTERNAL_SERVER_ERROR): CodedError {
         // CodedError bubble up from inside?
         if (error instanceof CodedError) {
             return error;

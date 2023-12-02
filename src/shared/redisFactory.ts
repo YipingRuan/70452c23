@@ -11,11 +11,10 @@ export async function redisClientFactory(config: ConfigService): Promise<RedisCl
       port: config.get("REDIS_PORT")
     }
   };
+  
   const client = redis.createClient(redisConfig);
-
   await client.connect();
 
   new Logger("RedisClient").log(`Connected: ${redisConfig.socket.host}`);
-
   return client as RedisClientType;
 };
