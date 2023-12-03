@@ -104,12 +104,12 @@ A `CodedError` class is designed such that it will bubble up the `try-cache` cha
   - Error code and data allows frontend to interpolate/translate with an template in local language
   - User friendly (e.g,  "Update failed"[✓],  "Database fail"[X]) error code and http status code respects developer intention. 
 - For developer:
-  - **Original error stack** is preserved, not swallowed, which greatly improve the debugging expereince
+  - **Original error stack** is preserved, not swallowed, which greatly improve the debugging experience
   - Works naturally with nestjs exception filter
   - Pass error cross microservice with no effort
 
 ### Discussion about the App
-- Currently the match list rendering is a bit slow, consider only render list item when enter user view
+- Currently the match list rendering is a bit slow, consider only render list item when it enters user view
 - Avoid backend API call each time when user selecting competition filter
 
 ## Stay in touch
