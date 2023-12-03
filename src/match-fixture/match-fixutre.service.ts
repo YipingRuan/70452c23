@@ -27,7 +27,7 @@ export class MatchFixtureService {
     this.logger.log(`${logPrefix} start: ` + JSON.stringify({ date, timezoneOffset }));
 
     // Set day start/end
-    const dayStart = inputDay.add(timezoneOffset, "hour");
+    const dayStart = inputDay.add(-timezoneOffset, "hour");
     const dayEnd = dayStart.add(1, "day").add(-1, "millisecond");
 
     // Query redis
@@ -36,14 +36,14 @@ export class MatchFixtureService {
       "idx:match",
       `@time:[${dayStart.format(df)} ${dayEnd.format(df)}]`,
       { LIMIT: { from: 0, size: 10000 } }
-    )
+    );
 
     const matches = result["documents"].map(x => x.value);
     
     this.logger.log(`${logPrefix} end: ` + JSON.stringify({ total: matches.length }));
     return {
       date,
-      timezoneOffset: 3,
+      timezoneOffset,
       localDay: [dayStart, dayEnd],
       matches,
     };
