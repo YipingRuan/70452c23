@@ -31,6 +31,12 @@ export class ListMonthlyMatchMaskQueryDto {
     month: number;
 }
 
+export class ListMonthlyMatchMaskResponseDto {
+    year: number
+    month: number
+    mask: number
+}
+
 export class MatchDto {
     id: Number
     time: Number

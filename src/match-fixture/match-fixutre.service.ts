@@ -3,7 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 import { CodedError, ErrorCode } from '../shared/CodedError';
 import { isInRange, logTemplate, parseDate } from '../shared/utilities';
-import { MatchDto } from './models/match-fixture.controller.dto';
+import { ListDailyMatchesResponseDto, ListMonthlyMatchMaskResponseDto, MatchDto } from './models/match-fixture.controller.dto';
 
 @Injectable()
 export class MatchFixtureService {
@@ -15,7 +15,7 @@ export class MatchFixtureService {
       this.correlationId = this.correlationService.getCorrelationId();
   }
 
-  async listDailyMatches(date: string, timezoneOffset: number) {
+  async listDailyMatches(date: string, timezoneOffset: number): Promise<ListDailyMatchesResponseDto> {
     const inputDay = parseDate(date, "YYYY-MM-DD");
     if (inputDay === null) {
       throw new CodedError(ErrorCode.INVALID_QUERYSTRING, { date });
@@ -50,7 +50,7 @@ export class MatchFixtureService {
     };
   }
 
-  async listMonthlyMatchMask(year: number, month: number) {
+  async listMonthlyMatchMask(year: number, month: number): Promise<ListMonthlyMatchMaskResponseDto> {
     if (!isInRange(year, 2023, 2024, true)) {
       throw new CodedError(ErrorCode.INVALID_QUERYSTRING, { year });
     }

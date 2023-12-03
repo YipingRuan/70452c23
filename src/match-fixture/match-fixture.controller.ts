@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { MatchFixtureService } from './match-fixutre.service';
 import { ValidatedQuery } from '../shared/utilities';
-import { ListDailyMatchesQueryDto, ListDailyMatchesResponseDto, ListMonthlyMatchMaskQueryDto } from './models/match-fixture.controller.dto';
+import { ListDailyMatchesQueryDto, ListDailyMatchesResponseDto, ListMonthlyMatchMaskQueryDto, ListMonthlyMatchMaskResponseDto } from './models/match-fixture.controller.dto';
 
 @Controller('matchFixture')
 export class MatchFixtureController {
@@ -13,9 +13,7 @@ export class MatchFixtureController {
   }
 
   @Get("listMonthlyMatchMask")
-  listMonthlyMatchMask(@ValidatedQuery() query: ListMonthlyMatchMaskQueryDto) {
+  async listMonthlyMatchMask(@ValidatedQuery() query: ListMonthlyMatchMaskQueryDto): Promise<ListMonthlyMatchMaskResponseDto> {
     return this.service.listMonthlyMatchMask(query.year, query.month);
   }
 }
-
-
