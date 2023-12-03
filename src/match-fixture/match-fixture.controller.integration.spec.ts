@@ -38,8 +38,8 @@ describe('listDailyMatches', () => {
   beforeEach(async () => controller = await resolveController());
 
   it('Should return daily matches', async () => {
-    const res = await controller.listDailyMatches({ date: "2023-12-05", timezoneOffset: 3 });
-
+    const res = await controller.listDailyMatches({date: "2023-12-05", timezoneOffset: 3});
+    
     expect(res.matches.length).toEqual(105);
     expect(res.localDay[0].isSame(dayjs("2023-12-04T19:00:00.000Z"))).toBeTruthy();
     expect(res.localDay[1].isSame(dayjs("2023-12-05T18:59:59.999Z"))).toBeTruthy();
@@ -52,8 +52,8 @@ describe('listMonthlyMatchMask', () => {
   beforeEach(async () => controller = await resolveController());
 
   it('Should return daily matches', async () => {
-    const res = await controller.listMonthlyMatchMask({ year: 2023, month: 12 });
-
+    const res = await controller.listMonthlyMatchMask({year: 2023, month: 12});
+    
     expect(res.mask).toEqual(450912258);
   });
 });
