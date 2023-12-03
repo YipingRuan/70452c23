@@ -1,53 +1,17 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A quick demo project for zuju fixture listing API.
 
-## Installation
+## Setup & Run
+
+Deployed at https://zuju-dev.yipingruan.com/api-docs
+
+To run locally, drop the `.env.development` file under the root folder, next to `.nev`.
 
 ```bash
 $ npm install
-```
-
-## Running the app
-
-```bash
-# development
 $ npm run start
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
 # unit tests
 $ npm run test
 
@@ -58,16 +22,96 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Design
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Assumptions
+
+Observations based on short usage of mobile app `Kickoff by Zuju`:
+- To serve users with different cultures (language and timezone)
+- There are fewer than 100 matches per day, for all tournaments (seems 50 on average)
+- For match information, there are far more reads than writes
+
+### Data store
+
+`redis` is choosen over `mysql` to support match fixture load. With 100 matches daily setup:
+- 1 month match summary only uses 4MB redis memory
+- Daily matches json reaches client within 30ms (around 15kb, free redis plan)
+
+Thus it is a ultra-fast and cost-effective choice.
+
+### Discussion on API
+
+#### List daily matches
+
+Return matches within 24 hours range.
+
+```
+/matchFixture/listDailyMatches?date=2023-12-05&timezoneOffset=3
+{
+    "date": "2023-12-05",
+    "timezoneOffset": 3,
+    "localDay": [
+        "2023-12-05T03:00:00.000Z",
+        "2023-12-06T02:59:59.999Z"
+    ],
+    "matches": [
+        {
+            "id": 401,
+            "time": 20231205182000,
+            "tournamentId": 3,
+            "homeTeamId": 166,
+            "awayTeamId": 63,
+            "score": "9:1",
+            "isEnded": true,
+            "isLive": false
+        }
+        // More matches
+    ]
+}
+```
+
+- Client should send `date` and `timezoneOffset` (based on user preference). This allows calculation of day start/end time in UTC
+- A redis key scan operation quickly fetches all the mathces with the time range
+- Only the id of tournament and team are returned. The client should hydrate the content
+- The client can easily group/filter/sort by tournament, in user local language
+
+#### List monthly match mask
+
+Return a mask number indicating the month daily match existence
+
+```
+/matchFixture/listMonthlyMatchMask?year=2023&month=12
+{
+    "year": 2023,
+    "month": 12,
+    "mask": 450912258
+}
+```
+
+We only need a single 32-bit integer to represent the information (max 31 days in a month!). From left to right with index starts at 0, a value 1 means there is at least 1 match on day `(index + 1)`. In the above example:
+```
+bin(450912258)
+11010111000000110000000000010
+```
+This means `2023-12-01` has no match while `2023-12-02` has.
+
+Design can be further refined to consider timzone like the `listDailyMatches` above.
+
+### Discussion on error handling
+A `CodedError` class is designed such that it will bubble up the `try-cache` chain:
+
+- For user:
+  - Error code and data allows frontend to interpolate/translate with an template in local language
+  - User friendly (e.g,  "Update failed"[✓],  "Database fail"[X]) error code and http status code respects developer intention. 
+- For developer:
+  - **Original error stack** is preserved, not swallowed, which greatly improve the debugging expereince
+  - Works naturally with nestjs exception filter
+  - Pass error cross microservice with no effort
+
+### Discussion about the App
+- Currently the match list rendering is a bit slow, consider only render list item when enter user view
+- Avoid backend API call each time when user selecting competition filter
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+- Author - [Yiping](https://www.linkedin.com/in/yiping-r-8a782a80/)
