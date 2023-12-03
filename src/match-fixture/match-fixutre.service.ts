@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 import { CodedError, ErrorCode } from '../shared/CodedError';
 import { isInRange, logTemplate, parseDate } from '../shared/utilities';
+import { MatchDto } from './models/match-fixture.controller.dto';
 
 @Injectable()
 export class MatchFixtureService {
@@ -38,13 +39,13 @@ export class MatchFixtureService {
       { LIMIT: { from: 0, size: 10000 } }
     );
 
-    const matches = result["documents"].map(x => x.value);
+    const matches = result["documents"].map(x => x.value as any as MatchDto);
     
     this.logger.log(`${logPrefix} end: ` + JSON.stringify({ total: matches.length }));
     return {
       date,
       timezoneOffset,
-      localDay: [dayStart, dayEnd],
+      localDay: [dayStart.toISOString(), dayEnd.toISOString()],
       matches,
     };
   }

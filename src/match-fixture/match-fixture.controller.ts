@@ -1,37 +1,15 @@
 import { Controller, Get } from '@nestjs/common';
 import { MatchFixtureService } from './match-fixutre.service';
-import { IsNumber, IsDateString, Min, Max } from 'class-validator';
 import { ValidatedQuery } from '../shared/utilities';
-
-class ListDailyMatchesQueryDto {
-  @IsDateString()
-  date: string;
-
-  @IsNumber()
-  @Min(-15)
-  @Max(15)
-  timezoneOffset: number;
-}
-
-class ListMonthlyMatchMaskQueryDto {
-  @IsNumber()
-  @Min(2000)
-  @Max(2030)
-  year: number;
-
-  @IsNumber()
-  @Min(1)
-  @Max(12)
-  month: number;
-}
+import { ListDailyMatchesQueryDto, ListDailyMatchesResponseDto, ListMonthlyMatchMaskQueryDto } from './models/match-fixture.controller.dto';
 
 @Controller('matchFixture')
 export class MatchFixtureController {
   constructor(protected readonly service: MatchFixtureService) { }
 
   @Get("listDailyMatches")
-  listDailyMatches(@ValidatedQuery() query: ListDailyMatchesQueryDto) {
-    return this.service.listDailyMatches(query.date, query.timezoneOffset);
+  async listDailyMatches(@ValidatedQuery() query: ListDailyMatchesQueryDto): Promise<ListDailyMatchesResponseDto> {
+    return await this.service.listDailyMatches(query.date, query.timezoneOffset);
   }
 
   @Get("listMonthlyMatchMask")
@@ -39,3 +17,5 @@ export class MatchFixtureController {
     return this.service.listMonthlyMatchMask(query.year, query.month);
   }
 }
+
+
