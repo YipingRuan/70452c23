@@ -1,5 +1,6 @@
 import { isInRange, logTemplate, parseDate } from './utilities';
 import * as dayjs from 'dayjs'
+import * as utc from 'dayjs/plugin/utc'
 
 describe('isInRange', () => {
     it('Correctly determines if a number is within range considering integer constraints', () => {
@@ -27,7 +28,7 @@ describe('parseDate', () => {
     it('Parse date string as format', () => {
         const format = "YYYY-MM-DD";
         const cases = [
-            { x: "2023-12-05", result: dayjs("2023-12-05") }
+            { x: "2023-12-05", result: dayjs.utc("2023-12-05") }
         ]
 
         for (const c of cases) {
