@@ -39,8 +39,8 @@ describe('listDailyMatches', () => {
     const res = await service.listDailyMatches("2023-12-05", 8);
 
     expect(res.matches.length).toEqual(103);
-    expect(res.localDay[0].isSame(dayjs("2023-12-04T16:00:00.000Z"))).toBeTruthy();
-    expect(res.localDay[1].isSame(dayjs("2023-12-05T15:59:59.999Z"))).toBeTruthy();
+    expect(res.localDay[0]).toEqual("2023-12-04T16:00:00.000Z");
+    expect(res.localDay[1]).toEqual(("2023-12-05T15:59:59.999Z"));
   });
 });
 
