@@ -11,7 +11,6 @@ import {
 } from '@evanion/nestjs-correlation-id';
 import { CustomCorrelationIdMiddleware } from './shared/middleware/CustomCorrelationIdMiddleware';
 import { redisClientFactory } from './shared/redisFactory';
-import { RedisClientType } from 'redis';
 
 @Module({
   imports: [CorrelationModule.forRoot(), 

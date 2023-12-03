@@ -1,8 +1,8 @@
 import { CorrelationService } from '@evanion/nestjs-correlation-id';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { RedisClientType } from 'redis';
-import { CodedError, ErrorCode } from 'src/shared/CodedError';
-import { isInRange, logTemplate, parseDate } from 'src/shared/utilities';
+import { CodedError, ErrorCode } from '../shared/CodedError';
+import { isInRange, logTemplate, parseDate } from '../shared/utilities';
 
 @Injectable()
 export class MatchFixtureService {

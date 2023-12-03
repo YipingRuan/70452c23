@@ -1,12 +1,11 @@
-import { CorrelationService } from '@evanion/nestjs-correlation-id';
 import { Controller, Get, HttpStatus } from '@nestjs/common';
-import { CodedError, ErrorCode } from 'src/shared/CodedError';
+import { CodedError, ErrorCode } from '../shared/CodedError';
 
 @Controller('playground')
 export class PlaygroundController {
     testService: TestService;
 
-    constructor(private readonly correlationService: CorrelationService) {
+    constructor() {
         this.testService = new TestService();
     }
 
