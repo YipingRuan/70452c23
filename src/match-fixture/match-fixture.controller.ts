@@ -1,7 +1,7 @@
-import { Controller, Get, Param, Post, Query, ValidationPipe } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { MatchFixtureService } from './match-fixutre.service';
-import { IsString, IsNumber, IsDateString, Min, Max } from 'class-validator';
-import { ValidatedQuery } from 'src/shared/utilities';
+import { IsNumber, IsDateString, Min, Max } from 'class-validator';
+import { ValidatedQuery } from '../shared/utilities';
 
 class ListDailyMatchesQueryDto {
   @IsDateString()

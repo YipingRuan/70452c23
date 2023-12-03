@@ -1,13 +1,13 @@
-import { BadRequestException, HttpStatus, Query, ValidationError, ValidationPipe, ValidationPipeOptions } from '@nestjs/common';
+import { HttpStatus, Query, ValidationError, ValidationPipe, ValidationPipeOptions } from '@nestjs/common';
 import * as dayjs from 'dayjs'
 import { CodedError, ErrorCode } from './CodedError';
 
 export function parseDate(input: string, format: string): dayjs.Dayjs | null {
-    const output = dayjs(input, format, true);
+    const output = dayjs(input, format, true).startOf("day");
     if (output.format(format) !== input) {
         return null;
     }
-
+    console.log(output.toISOString());
     return output;
 }
 
