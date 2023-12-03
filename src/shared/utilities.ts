@@ -1,13 +1,17 @@
 import { HttpStatus, Query, ValidationError, ValidationPipe, ValidationPipeOptions } from '@nestjs/common';
 import * as dayjs from 'dayjs'
+import * as utc from 'dayjs/plugin/utc'
 import { CodedError, ErrorCode } from './CodedError';
 
+dayjs.extend(utc);
+
 export function parseDate(input: string, format: string): dayjs.Dayjs | null {
-    const output = dayjs(input, format, true).startOf("day");
+    
+    const output = dayjs.utc(input, format, true).startOf("day");
     if (output.format(format) !== input) {
         return null;
     }
-    console.log(output.toISOString());
+    
     return output;
 }
 

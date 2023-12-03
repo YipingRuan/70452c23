@@ -6,7 +6,7 @@ A quick demo project for zuju fixture listing API.
 
 Deployed at https://zuju-dev.yipingruan.com/api-docs
 
-To run locally, drop the `.env.development` file under the root folder, next to `.nev`.
+To run locally, drop the `.env.development` file under the root folder, next to `.env`.
 
 ```bash
 $ npm install
@@ -49,22 +49,22 @@ Return matches within 24 hours range.
 /matchFixture/listDailyMatches?date=2023-12-05&timezoneOffset=3
 {
     "date": "2023-12-05",
-    "timezoneOffset": 3,
+    "timezoneOffset": 8,
     "localDay": [
-        "2023-12-05T03:00:00.000Z",
-        "2023-12-06T02:59:59.999Z"
+        "2023-12-04T16:00:00.000Z",
+        "2023-12-05T15:59:59.999Z"
     ],
     "matches": [
         {
-            "id": 401,
-            "time": 20231205182000,
-            "tournamentId": 3,
-            "homeTeamId": 166,
-            "awayTeamId": 63,
-            "score": "9:1",
+            "id": 301,
+            "time": 20231204182000,
+            "tournamentId": 7,
+            "homeTeamId": 480,
+            "awayTeamId": 107,
+            "score": "8:3",
             "isEnded": true,
-            "isLive": false
-        }
+            "isLive": true
+        },
         // More matches
     ]
 }
