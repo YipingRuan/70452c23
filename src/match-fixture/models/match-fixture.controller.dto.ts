@@ -38,11 +38,11 @@ export class ListMonthlyMatchMaskResponseDto {
 }
 
 export class MatchDto {
-    id: Number
-    time: Number
-    tournamentId: Number
-    homeTeamId: Number
-    awayTeamId: Number
+    id: number
+    time: number
+    tournamentId: number
+    homeTeamId: number
+    awayTeamId: number
     score: string
     isEnded: boolean
     isLive: boolean
